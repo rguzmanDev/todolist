@@ -1,115 +1,55 @@
-# Folio - Gestor de Tareas Jerárquico
+# Folio
 
-Aplicación web para gestionar tareas organizadas en libros y secciones. Diseñada para usar SQLite de forma local.
+Gestor de tareas jerárquico (Libros → Secciones → Tareas) con soporte local SQLite.
 
-## Tecnologías
+## Stack
 
-- **Frontend**: Next.js 16.2.3, React 19.2.4, TypeScript 5
-- **Estado**: Zustand 5.0.12
-- **Estilos**: Tailwind CSS 4
-- **Base de datos**: SQLite (better-sqlite3 12.8.0)
-- **Persistencia**: Archivo local `data/folio.db`
+- Next.js 16.2.3 · React 19 · TypeScript 5
+- Zustand · Tailwind CSS 4 · better-sqlite3
+- Radix UI (Dialog) · Lucide React
 
-## Estructura del Proyecto
-
-```
-src/
-├── app/                      # Next.js routes + API
-│   ├── api/books/           # CRUD books
-│   ├── api/tasks/           # CRUD tasks
-├── components/              # Componentes React
-│   ├── ui/                  # Primitivos (Button, Modal, Input, etc)
-│   ├── books/               # Formulario de libros
-│   ├── tasks/               # Formulario y lista de tareas
-│   ├── layout/              # Sidebar, Header
-│   └── views/               # BookView, SectionView
-├── lib/
-│   ├── db/                  # SQLite, migraciones, repositorios
-│   ├── api/                 # Cliente HTTP tipado
-│   ├── store/               # Zustand store
-│   ├── types.ts             # Interfaces TypeScript
-│   └── constants.ts         # Configuración (prioridades, colores)
-```
-
-## Estructura de Datos
-
-**Tablas SQLite:**
-- `books` - Libros (colección raíz)
-- `sections` - Secciones dentro de libros
-- `tasks` - Tareas con prioridad (low/medium/high) y estado (pending/completed)
-
-Todas las tablas tienen `created_at` y relaciones con cascading delete.
-
-## Desarrollo Local
+## Desarrollo
 
 ```bash
 npm install
-npm run dev  # http://localhost:3000
+npm run dev       # http://localhost:3000
 npm run build
-npm start    # Producción
+npm start
 ```
 
-## Publicar en Servidor Casero
+> La base de datos se crea automáticamente en `data/folio.db`.
 
-### Con Docker (Recomendado)
+## Docker
 
-1. **Crea `Dockerfile`:**
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-2. **Crea `docker-compose.yml`:**
-```yaml
-version: '3.8'
-services:
-  folio:
-    build: .
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./data:/app/data
-    environment:
-      - NODE_ENV=production
-```
-
-3. **Deploy:**
 ```bash
 docker-compose up -d
 ```
 
-### Notas Importantes
+Monta `./data:/app/data` para persistencia. Puerto por defecto: `3000`.
 
-- **Base de datos**: El archivo `folio.db` se crea en `data/` automáticamente
-- **Volumen Docker**: Monta `./data:/app/data` para persistencia entre contenedores
-- **Puerto**: Por defecto usa `3000`, configurable en docker-compose.yml
-- **Node.js requerido**: better-sqlite3 necesita compilar natively (por eso Node.js en Dockerfile)
-- **Variable de entorno**: `NODE_ENV=production` para optimizar
+## Estructura
 
-### Alternativa: Sin Docker
-
-```bash
-npm install
-npm run build
-NODE_ENV=production npm start
+```
+src/
+├── app/            # Routes + API (books, sections, tasks)
+├── components/
+│   ├── layout/     # Sidebar, ContentHeader, MobileSidebar
+│   ├── views/      # BookView, SectionView
+│   ├── tasks/      # TaskGroup, TaskFilters, TaskForm
+│   ├── books/      # BookForm
+│   └── ui/         # Button, Modal, Input, EmptyState…
+└── lib/
+    ├── db/         # SQLite + repositorios
+    ├── store/      # Zustand
+    └── hooks/      # useTheme
 ```
 
-El archivo `data/folio.db` persistirá en el mismo directorio.
+## Notas
 
-## Interfaz de Usuario
-
-- Barra lateral oscura (#gray-900) con árbol de navegación
-- Jerarquía: Libros → Secciones → Tareas
-- Filtros: Todos / Pendiente / Completado
-- Modales para crear/editar
-- Responsive con Tailwind CSS
+- Tema claro/oscuro via CSS variables (`data-theme` en `<html>`)
+- Sidebar colapsable en desktop; drawer en mobile (logo como trigger)
+- Fuente Inter · 18px base
 
 ---
 
-**Versión**: 1.0.0 | **Dominio**: rgcore.dev
+v1.0.0 · rgcore.dev
