@@ -14,6 +14,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: APP_NAME,
   description: `Personal task manager by ${APP_DOMAIN}`,
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({

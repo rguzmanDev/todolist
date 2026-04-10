@@ -1,13 +1,12 @@
 'use client'
 
 import { useMemo } from 'react'
-import { BookOpen } from 'lucide-react'
+import Image from 'next/image'
 import { useAppStore } from '@/lib/store'
 import TaskGroup from '@/components/tasks/TaskGroup'
 import type { Task } from '@/lib/types'
 import EmptyState from '@/components/ui/EmptyState'
-import { cn } from '@/lib/utils'
-import { THEME } from '@/lib/theme'
+import { useTheme } from '@/lib/hooks/useTheme'
 
 function SectionDivider({ name, count }: { name: string; count: number }) {
   return (
@@ -16,13 +15,22 @@ function SectionDivider({ name, count }: { name: string; count: number }) {
       {count > 0 && (
         <span className="rounded-full px-1.5 py-0.5 text-xs" style={{ backgroundColor: 'var(--color-badge-bg)', color: 'var(--color-badge-text)' }}>{count}</span>
       )}
-      <div className="flex-1 border-t" style={{ borderColor: 'var(--color-border-divider)' }} />
+      <div className="flex-1 border-t" style={{ borderColor: 'var(--color-border-light)' }} />
     </div>
   )
 }
 
 function WelcomeIcon() {
-  return <BookOpen className="h-12 w-12" strokeWidth={1.5} style={{ color: 'var(--color-text-tertiary)' }} />
+  const { theme } = useTheme()
+  return (
+    <Image
+      src={theme === 'dark' ? '/logotipoOscuro.png' : '/logotipoClaro.png'}
+      alt="Folio"
+      width={320}
+      height={110}
+      className="object-contain opacity-90"
+    />
+  )
 }
 
 export default function BookView() {

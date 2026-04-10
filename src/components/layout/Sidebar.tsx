@@ -1,14 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, ChevronDown, BookOpen } from 'lucide-react'
+import Image from 'next/image'
+import { Plus, ChevronDown } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import BookForm from '@/components/books/BookForm'
 import SectionForm from '@/components/sections/SectionForm'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { cn, pluralize } from '@/lib/utils'
-import { THEME } from '@/lib/theme'
 import { APP_NAME, APP_DOMAIN } from '@/lib/constants'
+import { useTheme } from '@/lib/hooks/useTheme'
 import type { Book, Section } from '@/lib/types'
 
 function ChevronIcon({ open }: { open: boolean }) {
@@ -121,7 +122,7 @@ function BookRow({
   return (
     <>
       <div>
-        <div className="group flex items-center gap-1 rounded-md px-2 py-1 transition-colors" style={{ backgroundColor: 'var(--color-hover-bg)' }}>
+        <div className="group flex items-center gap-1 rounded-md px-2 py-1 transition-colors" style={{ backgroundColor: isSelected ? 'var(--color-sidebar-accent)' : 'transparent' }}>
           <button
             onClick={() => setExpanded((v) => !v)}
             className="flex h-5 w-5 shrink-0 items-center justify-center"
@@ -154,7 +155,7 @@ function BookRow({
             <button
               onClick={(e) => { e.stopPropagation(); setShowNewSection(true) }}
               className="rounded p-1 transition-colors"
-              style={{ color: 'var(--color-sidebar-text)', backgroundColor: 'var(--color-hover-bg)' }}
+              style={{ color: 'var(--color-sidebar-text)', backgroundColor: 'var(--color-sidebar-hover)' }}
               aria-label="Add section"
             >
               <PlusIcon />
@@ -162,7 +163,7 @@ function BookRow({
             <button
               onClick={(e) => { e.stopPropagation(); setShowEdit(true) }}
               className="rounded p-1 transition-colors"
-              style={{ color: 'var(--color-sidebar-text)', backgroundColor: 'var(--color-hover-bg)' }}
+              style={{ color: 'var(--color-sidebar-text)', backgroundColor: 'var(--color-sidebar-hover)' }}
               aria-label="Edit book"
             >
               <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
@@ -219,6 +220,8 @@ function BookRow({
 
 export default function Sidebar() {
   const [showNewBook, setShowNewBook] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+  const { theme } = useTheme()
 
   const books = useAppStore((s) => s.books)
   const sections = useAppStore((s) => s.sections)
@@ -230,24 +233,83 @@ export default function Sidebar() {
   const totalPending = books.reduce((sum, b) => sum + b.pendingCount, 0)
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col" style={{ backgroundColor: THEME.ui.sidebar.background }}>
-      <div className="flex items-center gap-2.5 border-b px-4 py-4" style={{ borderColor: THEME.ui.sidebar.border, background: THEME.ui.gradients.header }}>
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: THEME.ui.sidebar.accent }}>
-          <BookOpen size={18} className="text-white" />
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-white">{APP_NAME}</p>
-          {totalPending > 0 && (
-            <p style={{ color: THEME.ui.text.tertiary }}>
-              {totalPending} {pluralize(totalPending, 'tarea', 'tareas')} pendiente
-            </p>
-          )}
-        </div>
+    <aside
+      className="flex h-full shrink-0 flex-col transition-all duration-300"
+      style={{ width: collapsed ? '4.5rem' : '15rem', backgroundColor: 'var(--color-sidebar-bg)' }}
+    >
+      {/* Header — click logo to toggle collapse */}
+      <div
+        className="flex items-center border-b px-2 py-2"
+        style={{ borderColor: 'var(--color-sidebar-border)', minHeight: '80px' }}
+      >
+        <button
+          onClick={() => setCollapsed(v => !v)}
+          className="flex shrink-0 items-center justify-center overflow-hidden rounded-xl hover:opacity-75 transition-opacity"
+          style={{ width: collapsed ? 52 : 64, height: collapsed ? 52 : 64 }}
+          aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+          title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+        >
+          <Image
+            src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'}
+            alt="Folio"
+            width={collapsed ? 48 : 60}
+            height={collapsed ? 48 : 60}
+            className="object-contain"
+          />
+        </button>
+
+        {!collapsed && (
+          <div className="ml-2 flex-1 min-w-0">
+            {totalPending > 0 ? (
+              <>
+                <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-sidebar-accent)' }}>
+                  {totalPending} {pluralize(totalPending, 'tarea', 'tareas')} pendiente
+                </p>
+                <p className="text-xs opacity-50 truncate" style={{ color: 'var(--color-sidebar-text)' }}>
+                  ¡Sigue así!
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-sidebar-text)' }}>
+                  Todo al día ✓
+                </p>
+                <p className="text-xs opacity-50 truncate" style={{ color: 'var(--color-sidebar-text)' }}>
+                  Sin pendientes
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
+      {/* Nav */}
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2 pt-3">
-        {books.length === 0 ? (
-          <p style={{ color: THEME.ui.text.secondary }} className="px-2 py-4 text-center text-xs">
+        {collapsed ? (
+          // Colapsado: punto de color con badge y tooltip
+          books.map((book) => (
+            <div key={book.id} className="group relative">
+              <button
+                onClick={() => selectBook(book.id)}
+                title={book.name}
+                className="flex w-full items-center justify-center rounded-md py-3 transition-colors"
+                style={{ backgroundColor: selectedBookId === book.id ? 'var(--color-sidebar-accent)' : 'transparent' }}
+              >
+                <span
+                  className="h-4 w-4 rounded-full"
+                  style={{ backgroundColor: book.color }}
+                />
+                {book.pendingCount > 0 && (
+                  <span
+                    className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full"
+                    style={{ backgroundColor: 'var(--color-priority-high)' }}
+                  />
+                )}
+              </button>
+            </div>
+          ))
+        ) : books.length === 0 ? (
+          <p className="px-2 py-4 text-center text-xs opacity-60" style={{ color: 'var(--color-sidebar-text)' }}>
             Sin libros aún. Crea uno abajo.
           </p>
         ) : (
@@ -268,17 +330,21 @@ export default function Sidebar() {
         )}
       </nav>
 
-      <div className="border-t p-3" style={{ borderColor: THEME.ui.sidebar.border }}>
-        <ThemeToggle />
+      {/* Footer */}
+      <div className="border-t p-2" style={{ borderColor: 'var(--color-sidebar-border)' }}>
+        <ThemeToggle collapsed={collapsed} />
         <button
           onClick={() => setShowNewBook(true)}
-          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95"
-          style={{ color: THEME.ui.text.tertiary, background: THEME.ui.sidebar.hover }}
+          className="mt-1 flex w-full items-center justify-center gap-2 rounded-md px-2 py-2 text-xs font-medium transition-colors"
+          style={{ color: 'var(--color-sidebar-text)', background: 'var(--color-sidebar-hover)' }}
+          title="Nuevo libro"
         >
-          <Plus size={16} />
-          Nuevo libro
+          <Plus size={16} className="shrink-0" />
+          {!collapsed && 'Nuevo libro'}
         </button>
-        <p className="mt-2 text-center text-xs" style={{ color: THEME.ui.text.secondary }}>{APP_DOMAIN}</p>
+        {!collapsed && (
+          <p className="mt-2 text-center text-xs opacity-40" style={{ color: 'var(--color-sidebar-text)' }}>{APP_DOMAIN}</p>
+        )}
       </div>
 
       <BookForm open={showNewBook} onClose={() => setShowNewBook(false)} />

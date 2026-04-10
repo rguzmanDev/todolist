@@ -48,10 +48,10 @@ const LIGHT_THEME = {
 
     // Sidebar
     sidebar: {
-      background: '#0F172A',  // slate-950
-      text: '#CBD5E1',        // slate-300
-      hover: '#1E293B',       // slate-800
-      border: '#334155',      // slate-700
+      background: '#1A1040',
+      text: '#C4B5FD',
+      hover: '#2D1F6E',
+      border: '#3B2A80',
       accent: '#7C3AED',      // violet-600
     },
 
@@ -119,8 +119,8 @@ const LIGHT_THEME = {
 
     // Gradientes
     gradients: {
-      primary: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
-      header: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+      primary: 'linear-gradient(135deg, #0EA5E9 0%, #0891B2 100%)',
+      header: 'linear-gradient(135deg, #0A1520 0%, #162535 100%)',
       subtle: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)',
     },
   },
