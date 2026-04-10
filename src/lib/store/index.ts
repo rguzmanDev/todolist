@@ -15,6 +15,7 @@ import type {
   CreateTaskPayload,
   UpdateTaskPayload,
 } from '@/lib/types'
+import type { ThemeMode } from '@/lib/theme'
 
 interface AppState {
   books: Book[]
@@ -23,6 +24,7 @@ interface AppState {
   selectedBookId: string | null
   selectedSectionId: string | null
   taskFilter: TaskFilter
+  theme: ThemeMode
   isLoadingBooks: boolean
   isLoadingTasks: boolean
 
@@ -44,6 +46,8 @@ interface AppState {
   deleteTask: (id: string) => Promise<void>
 
   setTaskFilter: (filter: TaskFilter) => void
+  toggleTheme: () => void
+  setTheme: (theme: ThemeMode) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -55,6 +59,7 @@ export const useAppStore = create<AppState>()(
       selectedBookId: null,
       selectedSectionId: null,
       taskFilter: 'all',
+      theme: 'light',
       isLoadingBooks: false,
       isLoadingTasks: false,
 
@@ -172,6 +177,16 @@ export const useAppStore = create<AppState>()(
       },
 
       setTaskFilter: (filter) => set({ taskFilter: filter }),
+
+      toggleTheme: () => {
+        set((state) => ({
+          theme: state.theme === 'light' ? 'dark' : 'light',
+        }))
+      },
+
+      setTheme: (theme: ThemeMode) => {
+        set({ theme })
+      },
     }),
     { name: 'folio-store' }
   )

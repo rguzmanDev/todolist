@@ -30,7 +30,7 @@ export default function TaskGroup({ tasks, section, emptyMessage }: TaskGroupPro
   }
 
   return (
-    <div className="divide-y divide-gray-50">
+    <div className="divide-y" style={{ borderColor: 'var(--color-border-divider)' }}>
       {tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}

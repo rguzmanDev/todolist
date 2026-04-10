@@ -12,17 +12,17 @@ import { THEME } from '@/lib/theme'
 function SectionDivider({ name, count }: { name: string; count: number }) {
   return (
     <div className="flex items-center gap-2 px-4 py-2 mt-2">
-      <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">{name}</span>
+      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>{name}</span>
       {count > 0 && (
-        <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500">{count}</span>
+        <span className="rounded-full px-1.5 py-0.5 text-xs" style={{ backgroundColor: 'var(--color-badge-bg)', color: 'var(--color-badge-text)' }}>{count}</span>
       )}
-      <div className="flex-1 border-t border-gray-100" />
+      <div className="flex-1 border-t" style={{ borderColor: 'var(--color-border-divider)' }} />
     </div>
   )
 }
 
 function WelcomeIcon() {
-  return <BookOpen className="h-12 w-12 text-slate-400" strokeWidth={1.5} />
+  return <BookOpen className="h-12 w-12" strokeWidth={1.5} style={{ color: 'var(--color-text-tertiary)' }} />
 }
 
 export default function BookView() {
@@ -62,7 +62,7 @@ export default function BookView() {
   if (isLoadingTasks) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-gray-400">Cargando tareas...</p>
+        <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Cargando tareas...</p>
       </div>
     )
   }

@@ -68,17 +68,20 @@ export default function TaskItem({ task }: TaskItemProps) {
           <p
             className={cn(
               'text-sm font-medium text-gray-800 leading-snug',
-              isCompleted && 'line-through text-gray-400'
+              isCompleted && 'line-through'
             )}
+            style={{
+              color: isCompleted ? 'var(--color-text-tertiary)' : 'var(--color-text-primary)'
+            }}
           >
             {task.title}
           </p>
           {task.description && (
-            <p className="mt-0.5 text-xs text-gray-500 line-clamp-2">{task.description}</p>
+            <p className="mt-0.5 text-xs line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>{task.description}</p>
           )}
           <div className="mt-1.5 flex items-center gap-2">
             <PriorityBadge priority={task.priority} />
-            <span className="text-xs text-gray-400">{formatDate(task.createdAt)}</span>
+            <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{formatDate(task.createdAt)}</span>
           </div>
         </div>
 

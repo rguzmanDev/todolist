@@ -5,6 +5,7 @@ import { Plus, ChevronDown, BookOpen } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import BookForm from '@/components/books/BookForm'
 import SectionForm from '@/components/sections/SectionForm'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { cn, pluralize } from '@/lib/utils'
 import { THEME } from '@/lib/theme'
 import { APP_NAME, APP_DOMAIN } from '@/lib/constants'
@@ -14,7 +15,8 @@ function ChevronIcon({ open }: { open: boolean }) {
   return (
     <ChevronDown
       size={14}
-      className={cn('text-gray-400 transition-transform', open && 'rotate-180')}
+      className={cn('transition-transform', open && 'rotate-180')}
+      style={{ color: 'var(--color-sidebar-text)' }}
     />
   )
 }
@@ -36,12 +38,11 @@ function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) 
   return (
     <>
       <div
-        className={cn(
-          'group flex w-full items-center justify-between rounded-md px-3 py-1.5 transition-colors',
-          isSelected
-            ? 'bg-indigo-50 text-indigo-700'
-            : 'text-gray-500 hover:bg-gray-700/30 hover:text-gray-300'
-        )}
+        className="group flex w-full items-center justify-between rounded-md px-3 py-1.5 transition-colors"
+        style={{
+          backgroundColor: isSelected ? 'var(--color-sidebar-accent)' : 'transparent',
+          color: isSelected ? '#FFFFFF' : 'var(--color-sidebar-text)',
+        }}
       >
         <button
           onClick={onSelect}
@@ -51,16 +52,23 @@ function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) 
         </button>
         <div className="flex items-center gap-1.5">
           {section.pendingCount > 0 && (
-            <span className={cn(
-              'rounded-full px-1.5 py-0.5 text-xs font-medium',
-              isSelected ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-700 text-gray-300'
-            )}>
+            <span
+              className="rounded-full px-1.5 py-0.5 text-xs font-medium"
+              style={{
+                backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : 'var(--color-sidebar-hover)',
+                color: isSelected ? '#FFFFFF' : 'var(--color-sidebar-text)',
+              }}
+            >
               {section.pendingCount}
             </span>
           )}
           <button
             onClick={(e) => { e.stopPropagation(); setShowEdit(true) }}
-            className="invisible rounded p-0.5 hover:bg-gray-600 group-hover:visible"
+            className="invisible rounded p-0.5 transition-colors group-hover:visible"
+            style={{
+              backgroundColor: 'var(--color-sidebar-hover)',
+              color: 'var(--color-sidebar-text)',
+            }}
             aria-label="Edit section"
           >
             <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
@@ -113,7 +121,7 @@ function BookRow({
   return (
     <>
       <div>
-        <div className="group flex items-center gap-1 rounded-md px-2 py-1 transition-colors hover:bg-gray-700/40">
+        <div className="group flex items-center gap-1 rounded-md px-2 py-1 transition-colors" style={{ backgroundColor: 'var(--color-hover-bg)' }}>
           <button
             onClick={() => setExpanded((v) => !v)}
             className="flex h-5 w-5 shrink-0 items-center justify-center"
@@ -124,10 +132,10 @@ function BookRow({
 
           <button
             onClick={handleBookClick}
-            className={cn(
-              'flex flex-1 items-center gap-2 truncate rounded py-0.5 text-sm font-medium',
-              isSelected && !selectedSectionId ? 'text-white' : 'text-gray-300 hover:text-white'
-            )}
+            className="flex flex-1 items-center gap-2 truncate rounded py-0.5 text-sm font-medium"
+            style={{
+              color: isSelected && !selectedSectionId ? '#FFFFFF' : 'var(--color-sidebar-text)',
+            }}
           >
             <span
               className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -137,7 +145,7 @@ function BookRow({
           </button>
 
           {book.pendingCount > 0 && (
-            <span className="shrink-0 rounded-full bg-gray-700 px-1.5 py-0.5 text-xs text-gray-300">
+            <span className="shrink-0 rounded-full px-1.5 py-0.5 text-xs" style={{ backgroundColor: 'var(--color-sidebar-hover)', color: 'var(--color-sidebar-text)' }}>
               {book.pendingCount}
             </span>
           )}
@@ -145,14 +153,16 @@ function BookRow({
           <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={(e) => { e.stopPropagation(); setShowNewSection(true) }}
-              className="rounded p-1 text-gray-400 hover:bg-gray-600 hover:text-gray-200"
+              className="rounded p-1 transition-colors"
+              style={{ color: 'var(--color-sidebar-text)', backgroundColor: 'var(--color-hover-bg)' }}
               aria-label="Add section"
             >
               <PlusIcon />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); setShowEdit(true) }}
-              className="rounded p-1 text-gray-400 hover:bg-gray-600 hover:text-gray-200"
+              className="rounded p-1 transition-colors"
+              style={{ color: 'var(--color-sidebar-text)', backgroundColor: 'var(--color-hover-bg)' }}
               aria-label="Edit book"
             >
               <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
@@ -162,9 +172,13 @@ function BookRow({
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                if (confirm(`Delete "${book.name}" and all its tasks?`)) deleteBook(book.id)
+                if (confirm(`Delete \"${book.name}\" and all its tasks?`)) deleteBook(book.id)
               }}
-              className="rounded p-1 text-gray-400 hover:bg-red-900/40 hover:text-red-400"
+              className="rounded p-1 transition-colors"
+              style={{
+                color: 'var(--color-dismiss-text)',
+                backgroundColor: 'var(--color-dismiss-bg)',
+              }}
               aria-label="Delete book"
             >
               <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
@@ -175,7 +189,7 @@ function BookRow({
         </div>
 
         {expanded && hasSections && (
-          <div className="ml-6 mt-0.5 flex flex-col gap-0.5 border-l border-gray-700 pl-2">
+          <div className="ml-6 mt-0.5 flex flex-col gap-0.5 pl-2" style={{ borderLeft: `1px solid var(--color-sidebar-border)` }}>
             {sections.map((section) => (
               <SectionRow
                 key={section.id}
@@ -255,6 +269,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="border-t p-3" style={{ borderColor: THEME.ui.sidebar.border }}>
+        <ThemeToggle />
         <button
           onClick={() => setShowNewBook(true)}
           className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95"

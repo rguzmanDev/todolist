@@ -6,7 +6,6 @@ import TaskFilters from '@/components/tasks/TaskFilters'
 import TaskForm from '@/components/tasks/TaskForm'
 import Button from '@/components/ui/Button'
 import { useAppStore, selectSelectedBook, selectSelectedSection } from '@/lib/store'
-import { THEME } from '@/lib/theme'
 
 export default function ContentHeader() {
   const [showNewTask, setShowNewTask] = useState(false)
@@ -21,13 +20,13 @@ export default function ContentHeader() {
 
   return (
     <>
-      <header className="flex items-center justify-between border-b px-6 py-4" style={{ borderColor: THEME.ui.border.light }}>
+      <header className="flex items-center justify-between border-b px-6 py-4" style={{ borderColor: 'var(--color-border-light)', backgroundColor: 'var(--color-bg)' }}>
         <div>
           {selectedSection ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm" style={{ color: THEME.ui.text.secondary }}>{selectedBook?.name}</span>
-              <ChevronRight size={14} style={{ color: THEME.ui.text.tertiary }} />
-              <span className="text-sm font-semibold" style={{ color: THEME.ui.text.primary }}>{selectedSection.name}</span>
+              <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{selectedBook?.name}</span>
+              <ChevronRight size={14} style={{ color: 'var(--color-text-tertiary)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{selectedSection.name}</span>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -35,7 +34,7 @@ export default function ContentHeader() {
                 className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: selectedBook?.color }}
               />
-              <h1 className="text-sm font-semibold" style={{ color: THEME.ui.text.primary }}>{title}</h1>
+              <h1 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{title}</h1>
             </div>
           )}
         </div>

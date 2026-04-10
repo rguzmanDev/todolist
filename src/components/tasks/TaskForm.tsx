@@ -94,7 +94,7 @@ export default function TaskForm({ open, onClose, bookId, sectionId, task }: Tas
           onChange={(e) => setDescription(e.target.value)}
         />
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-700">Prioridad</span>
+          <span className="text-xs font-medium" style={{ color: 'var(--color-text-primary)' }}>Prioridad</span>
           <div className="flex gap-2">
             {PRIORITIES.map((p) => (
               <button

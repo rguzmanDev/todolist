@@ -26,7 +26,7 @@ export default function SectionView() {
   if (isLoadingTasks) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-gray-400">Cargando tareas...</p>
+        <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Cargando tareas...</p>
       </div>
     )
   }
@@ -36,8 +36,8 @@ export default function SectionView() {
       <div className="flex flex-1 items-center justify-center">
         <EmptyState
           icon={<TaskIcon />}
-          title="No tasks in this section"
-          description="Add a task to get started"
+          title="Sin tareas en esta sección"
+          description="Agrega una tarea para comenzar"
         />
       </div>
     )

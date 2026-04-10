@@ -63,7 +63,7 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
           autoFocus
         />
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-700">Color</span>
+          <span className="text-xs font-medium" style={{ color: 'var(--color-text-primary)' }}>Color</span>
           <ColorPicker value={color} onChange={(c: BookColor) => setColor(c)} />
         </div>
         <div className="flex justify-end gap-2 pt-1">
