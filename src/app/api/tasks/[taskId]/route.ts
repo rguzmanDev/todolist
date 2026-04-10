@@ -22,6 +22,6 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
     const existing = taskRepository.findById(taskId)
     if (!existing) return apiError('Task not found', 404)
     taskRepository.delete(taskId)
-    return apiSuccess(null, 204)
+    return apiSuccess(null, 200)
   })
 }

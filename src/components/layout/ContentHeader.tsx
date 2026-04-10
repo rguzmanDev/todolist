@@ -52,7 +52,7 @@ export default function ContentHeader() {
           <TaskFilters />
           <Button size="sm" onClick={() => setShowNewTask(true)}>
             <PlusIcon />
-            New task
+            Nueva tarea
           </Button>
         </div>
       </header>

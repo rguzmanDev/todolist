@@ -36,7 +36,7 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim()) { setError('Name is required'); return }
+    if (!name.trim()) { setError('El nombre es obligatorio'); return }
     setLoading(true)
     try {
       if (isEditing && book) {
@@ -51,12 +51,12 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title={isEditing ? 'Edit Book' : 'New Book'}>
+    <Modal open={open} onClose={handleClose} title={isEditing ? 'Editar Libro' : 'Nuevo Libro'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           id="book-name"
-          label="Name"
-          placeholder="e.g. Work, Studies, Personal"
+          label="Nombre"
+          placeholder="ej. Trabajo, Estudios, Personal"
           value={name}
           onChange={(e) => { setName(e.target.value); setError('') }}
           error={error}
@@ -68,10 +68,10 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
         </div>
         <div className="flex justify-end gap-2 pt-1">
           <Button type="button" variant="secondary" onClick={handleClose}>
-            Cancel
+            Cancelar
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : isEditing ? 'Save changes' : 'Create book'}
+            {loading ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear libro'}
           </Button>
         </div>
       </form>

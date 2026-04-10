@@ -23,6 +23,6 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
     const existing = sectionRepository.findById(sectionId)
     if (!existing) return apiError('Section not found', 404)
     sectionRepository.delete(sectionId)
-    return apiSuccess(null, 204)
+    return apiSuccess(null, 200)
   })
 }

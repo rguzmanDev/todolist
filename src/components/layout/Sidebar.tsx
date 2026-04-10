@@ -40,16 +40,20 @@ function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) 
 
   return (
     <>
-      <button
-        onClick={onSelect}
+      <div
         className={cn(
-          'group flex w-full items-center justify-between rounded-md px-3 py-1.5 text-left transition-colors',
+          'group flex w-full items-center justify-between rounded-md px-3 py-1.5 transition-colors',
           isSelected
             ? 'bg-indigo-50 text-indigo-700'
             : 'text-gray-500 hover:bg-gray-700/30 hover:text-gray-300'
         )}
       >
-        <span className="truncate text-xs">{section.name}</span>
+        <button
+          onClick={onSelect}
+          className="flex-1 truncate text-left text-xs"
+        >
+          {section.name}
+        </button>
         <div className="flex items-center gap-1.5">
           {section.pendingCount > 0 && (
             <span className={cn(
@@ -69,7 +73,7 @@ function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) 
             </svg>
           </button>
         </div>
-      </button>
+      </div>
       {showEdit && (
         <SectionForm
           open={showEdit}
@@ -228,7 +232,7 @@ export default function Sidebar() {
           <p className="text-sm font-semibold text-white">{APP_NAME}</p>
           {totalPending > 0 && (
             <p className="text-xs text-gray-400">
-              {totalPending} {pluralize(totalPending, 'task', 'tasks')} pending
+              {totalPending} {pluralize(totalPending, 'tarea', 'tareas')} pendiente
             </p>
           )}
         </div>
@@ -237,7 +241,7 @@ export default function Sidebar() {
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2 pt-3">
         {books.length === 0 ? (
           <p className="px-2 py-4 text-center text-xs text-gray-500">
-            No books yet. Create one below.
+            Sin libros aún. Crea uno abajo.
           </p>
         ) : (
           books.map((book) => {
@@ -263,7 +267,7 @@ export default function Sidebar() {
           className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-colors"
         >
           <PlusIcon />
-          New book
+          Nuevo libro
         </button>
         <p className="mt-2 text-center text-xs text-gray-600">{APP_DOMAIN}</p>
       </div>

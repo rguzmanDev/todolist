@@ -34,6 +34,6 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
     const existing = bookRepository.findById(bookId)
     if (!existing) return apiError('Book not found', 404)
     bookRepository.delete(bookId)
-    return apiSuccess(null, 204)
+    return apiSuccess(null, 200)
   })
 }

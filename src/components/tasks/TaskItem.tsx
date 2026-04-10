@@ -47,7 +47,7 @@ export default function TaskItem({ task }: TaskItemProps) {
         <button
           onClick={handleToggle}
           disabled={toggling}
-          aria-label={isCompleted ? 'Mark as pending' : 'Mark as completed'}
+          aria-label={isCompleted ? 'Marcar como pendiente' : 'Marcar como completado'}
           className={cn(
             'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded',
             'border-2 transition-colors',
@@ -84,7 +84,7 @@ export default function TaskItem({ task }: TaskItemProps) {
         <div className="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => setShowEdit(true)}
-            aria-label="Edit task"
+            aria-label="Editar tarea"
             className="rounded-md p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors"
           >
             <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
@@ -94,7 +94,7 @@ export default function TaskItem({ task }: TaskItemProps) {
           <button
             onClick={handleDelete}
             disabled={deleting}
-            aria-label="Delete task"
+            aria-label="Eliminar tarea"
             className="rounded-md p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
           >
             <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">

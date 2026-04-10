@@ -1,7 +1,9 @@
 'use client'
 
-import { useAppStore, selectFilteredTasks, selectTasksBySection } from '@/lib/store'
+import { useMemo } from 'react'
+import { useAppStore } from '@/lib/store'
 import TaskGroup from '@/components/tasks/TaskGroup'
+import type { Task } from '@/lib/types'
 import EmptyState from '@/components/ui/EmptyState'
 import { cn } from '@/lib/utils'
 
@@ -27,18 +29,33 @@ function WelcomeIcon() {
 
 export default function BookView() {
   const sections = useAppStore((s) => s.sections)
-  const tasksBySection = useAppStore(selectTasksBySection)
-  const filteredTasks = useAppStore(selectFilteredTasks)
+  const tasks = useAppStore((s) => s.tasks)
+  const taskFilter = useAppStore((s) => s.taskFilter)
   const isLoadingTasks = useAppStore((s) => s.isLoadingTasks)
   const selectedBookId = useAppStore((s) => s.selectedBookId)
+
+  const filteredTasks = useMemo(
+    () => (taskFilter === 'all' ? tasks : tasks.filter((t) => t.status === taskFilter)),
+    [tasks, taskFilter]
+  )
+
+  const tasksBySection = useMemo(() => {
+    const map = new Map<string | null, Task[]>()
+    for (const task of filteredTasks) {
+      const group = map.get(task.sectionId) ?? []
+      group.push(task)
+      map.set(task.sectionId, group)
+    }
+    return map
+  }, [filteredTasks])
 
   if (!selectedBookId) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <EmptyState
           icon={<WelcomeIcon />}
-          title="Select a book to get started"
-          description="Choose a book from the sidebar or create a new one"
+          title="Selecciona un libro para comenzar"
+          description="Elige un libro de la barra lateral o crea uno nuevo"
         />
       </div>
     )
@@ -47,7 +64,7 @@ export default function BookView() {
   if (isLoadingTasks) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-gray-400">Loading tasks...</p>
+        <p className="text-sm text-gray-400">Cargando tareas...</p>
       </div>
     )
   }
@@ -60,8 +77,8 @@ export default function BookView() {
       <div className="flex flex-1 items-center justify-center">
         <EmptyState
           icon={<WelcomeIcon />}
-          title="No tasks"
-          description="Use the New task button above to add your first task"
+          title="Sin tareas"
+          description="Usa el botón Nueva tarea arriba para agregar tu primer tarea"
         />
       </div>
     )
@@ -72,7 +89,7 @@ export default function BookView() {
       {directTasks.length > 0 && (
         <div>
           {sections.length > 0 && (
-            <SectionDivider name="Direct tasks" count={directTasks.length} />
+            <SectionDivider name="Tareas directas" count={directTasks.length} />
           )}
           <TaskGroup tasks={directTasks} />
         </div>

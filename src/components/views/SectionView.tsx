@@ -1,6 +1,7 @@
 'use client'
 
-import { useAppStore, selectFilteredTasks } from '@/lib/store'
+import { useMemo } from 'react'
+import { useAppStore } from '@/lib/store'
 import TaskGroup from '@/components/tasks/TaskGroup'
 import EmptyState from '@/components/ui/EmptyState'
 
@@ -13,8 +14,14 @@ function TaskIcon() {
 }
 
 export default function SectionView() {
-  const filteredTasks = useAppStore(selectFilteredTasks)
+  const tasks = useAppStore((s) => s.tasks)
+  const taskFilter = useAppStore((s) => s.taskFilter)
   const isLoadingTasks = useAppStore((s) => s.isLoadingTasks)
+
+  const filteredTasks = useMemo(
+    () => (taskFilter === 'all' ? tasks : tasks.filter((t) => t.status === taskFilter)),
+    [tasks, taskFilter]
+  )
 
   if (isLoadingTasks) {
     return (

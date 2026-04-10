@@ -184,19 +184,3 @@ export function selectSelectedBook(state: AppState): Book | null {
 export function selectSelectedSection(state: AppState): Section | null {
   return state.sections.find((s) => s.id === state.selectedSectionId) ?? null
 }
-
-export function selectFilteredTasks(state: AppState): Task[] {
-  if (state.taskFilter === 'all') return state.tasks
-  return state.tasks.filter((t) => t.status === state.taskFilter)
-}
-
-export function selectTasksBySection(state: AppState): Map<string | null, Task[]> {
-  const filtered = selectFilteredTasks(state)
-  const map = new Map<string | null, Task[]>()
-  for (const task of filtered) {
-    const group = map.get(task.sectionId) ?? []
-    group.push(task)
-    map.set(task.sectionId, group)
-  }
-  return map
-}

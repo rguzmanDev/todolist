@@ -3,7 +3,7 @@ export function generateId(): string {
 }
 
 export function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString('es-MX', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

@@ -22,13 +22,13 @@ export type BookColor = (typeof BOOK_COLORS)[number]
 export const DEFAULT_BOOK_COLOR: BookColor = '#3B82F6'
 
 export const PRIORITY_CONFIG = {
-  low: { label: 'Low', className: 'bg-gray-100 text-gray-500' },
-  medium: { label: 'Medium', className: 'bg-amber-100 text-amber-700' },
-  high: { label: 'High', className: 'bg-red-100 text-red-600' },
+  low: { label: 'Bajo', className: 'bg-gray-100 text-gray-500' },
+  medium: { label: 'Medio', className: 'bg-amber-100 text-amber-700' },
+  high: { label: 'Alto', className: 'bg-red-100 text-red-600' },
 } as const
 
 export const TASK_FILTER_CONFIG = {
-  all: { label: 'All' },
-  pending: { label: 'Pending' },
-  completed: { label: 'Completed' },
+  all: { label: 'Todos' },
+  pending: { label: 'Pendiente' },
+  completed: { label: 'Completado' },
 } as const

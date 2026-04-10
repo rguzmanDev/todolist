@@ -32,7 +32,7 @@ export default function SectionForm({ open, onClose, bookId, section }: SectionF
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim()) { setError('Name is required'); return }
+    if (!name.trim()) { setError('El nombre es obligatorio'); return }
     setLoading(true)
     try {
       if (isEditing && section) {
@@ -47,12 +47,12 @@ export default function SectionForm({ open, onClose, bookId, section }: SectionF
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title={isEditing ? 'Edit section' : 'New section'}>
+    <Modal open={open} onClose={handleClose} title={isEditing ? 'Editar sección' : 'Nueva sección'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           id="section-name"
-          label="Name"
-          placeholder="e.g. API Backend, Sprint 23"
+          label="Nombre"
+          placeholder="ej. API Backend, Sprint 23"
           value={name}
           onChange={(e) => { setName(e.target.value); setError('') }}
           error={error}
@@ -60,10 +60,10 @@ export default function SectionForm({ open, onClose, bookId, section }: SectionF
         />
         <div className="flex justify-end gap-2 pt-1">
           <Button type="button" variant="secondary" onClick={handleClose}>
-            Cancel
+            Cancelar
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : isEditing ? 'Save changes' : 'Create section'}
+            {loading ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear sección'}
           </Button>
         </div>
       </form>

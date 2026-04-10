@@ -17,9 +17,9 @@ interface TaskFormProps {
 }
 
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
+  { value: 'low', label: 'Bajo' },
+  { value: 'medium', label: 'Medio' },
+  { value: 'high', label: 'Alto' },
 ]
 
 export default function TaskForm({ open, onClose, bookId, sectionId, task }: TaskFormProps) {
@@ -50,7 +50,7 @@ export default function TaskForm({ open, onClose, bookId, sectionId, task }: Tas
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim()) { setError('Title is required'); return }
+    if (!title.trim()) { setError('El título es obligatorio'); return }
     setLoading(true)
     try {
       if (isEditing && task) {
@@ -75,12 +75,12 @@ export default function TaskForm({ open, onClose, bookId, sectionId, task }: Tas
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title={isEditing ? 'Edit task' : 'New task'}>
+    <Modal open={open} onClose={handleClose} title={isEditing ? 'Editar tarea' : 'Nueva tarea'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           id="task-title"
-          label="Title"
-          placeholder="What needs to be done?"
+          label="Título"
+          placeholder="¿Qué necesita hacerse?"
           value={title}
           onChange={(e) => { setTitle(e.target.value); setError('') }}
           error={error}
@@ -88,13 +88,13 @@ export default function TaskForm({ open, onClose, bookId, sectionId, task }: Tas
         />
         <Textarea
           id="task-description"
-          label="Description (optional)"
-          placeholder="Add more details..."
+          label="Descripción (opcional)"
+          placeholder="Agregar más detalles..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-700">Priority</span>
+          <span className="text-xs font-medium text-gray-700">Prioridad</span>
           <div className="flex gap-2">
             {PRIORITIES.map((p) => (
               <button
@@ -114,10 +114,10 @@ export default function TaskForm({ open, onClose, bookId, sectionId, task }: Tas
         </div>
         <div className="flex justify-end gap-2 pt-1">
           <Button type="button" variant="secondary" onClick={handleClose}>
-            Cancel
+            Cancelar
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : isEditing ? 'Save changes' : 'Create task'}
+            {loading ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear tarea'}
           </Button>
         </div>
       </form>
