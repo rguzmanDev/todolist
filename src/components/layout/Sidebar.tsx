@@ -218,7 +218,7 @@ function BookRow({
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const [showNewBook, setShowNewBook] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const { theme } = useTheme()
@@ -290,7 +290,7 @@ export default function Sidebar() {
           books.map((book) => (
             <div key={book.id} className="group relative">
               <button
-                onClick={() => selectBook(book.id)}
+                onClick={() => { selectBook(book.id); onNavigate?.() }}
                 title={book.name}
                 className="flex w-full items-center justify-center rounded-md py-3 transition-colors"
                 style={{ backgroundColor: selectedBookId === book.id ? 'var(--color-sidebar-accent)' : 'transparent' }}
@@ -322,8 +322,8 @@ export default function Sidebar() {
                 sections={bookSections}
                 isSelected={selectedBookId === book.id}
                 selectedSectionId={selectedBookId === book.id ? selectedSectionId : null}
-                onSelectBook={() => selectBook(book.id)}
-                onSelectSection={(id) => selectSection(id)}
+                onSelectBook={() => { selectBook(book.id); onNavigate?.() }}
+                onSelectSection={(id) => { selectSection(id); onNavigate?.() }}
               />
             )
           })

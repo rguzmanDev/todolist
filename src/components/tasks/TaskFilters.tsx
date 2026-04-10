@@ -4,7 +4,7 @@ import { useAppStore } from '@/lib/store'
 import { TASK_FILTER_CONFIG } from '@/lib/constants'
 import type { TaskFilter } from '@/lib/types'
 
-const FILTERS = Object.entries(TASK_FILTER_CONFIG) as [TaskFilter, { label: string }][]
+const FILTERS = Object.entries(TASK_FILTER_CONFIG) as [TaskFilter, { label: string; shortLabel: string }][]
 
 export default function TaskFilters() {
   const taskFilter = useAppStore((s) => s.taskFilter)
@@ -16,13 +16,14 @@ export default function TaskFilters() {
         <button
           key={value}
           onClick={() => setTaskFilter(value)}
-          className="rounded-md px-3 py-1 text-xs font-medium transition-colors"
+          className="rounded-md px-2 py-1 text-xs font-medium transition-colors sm:px-3"
           style={taskFilter === value
             ? { backgroundColor: 'var(--color-bg)', color: 'var(--color-text-primary)', boxShadow: '0 1px 2px rgba(0,0,0,0.15)' }
             : { color: 'var(--color-text-secondary)' }
           }
         >
-          {config.label}
+          <span className="sm:hidden">{config.shortLabel}</span>
+          <span className="hidden sm:inline">{config.label}</span>
         </button>
       ))}
     </div>
