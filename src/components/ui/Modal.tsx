@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { THEME } from '@/lib/theme'
 
 interface ModalProps {
   open: boolean
@@ -29,7 +31,7 @@ export default function Modal({ open, onClose, title, children, className }: Mod
   return createPortal(
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose()
       }}
@@ -38,25 +40,25 @@ export default function Modal({ open, onClose, title, children, className }: Mod
       <div
         className={cn(
           'relative z-10 w-full max-w-md rounded-xl bg-white shadow-xl',
-          'ring-1 ring-black/5',
+          'ring-1 animate-in zoom-in-95 fade-in duration-200',
           className
         )}
+        style={{ borderColor: THEME.ui.border.light }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-          <h2 id="modal-title" className="text-sm font-semibold text-gray-900">
+        <div className="flex items-center justify-between px-5 py-4" style={{ borderBottomColor: THEME.ui.border.light, borderBottomWidth: '1px' }}>
+          <h2 id="modal-title" className="text-sm font-semibold" style={{ color: THEME.ui.text.primary }}>
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            className="rounded-md p-1 transition-all duration-200 hover:scale-110"
+            style={{ color: THEME.ui.text.secondary, backgroundColor: THEME.ui.state.hover }}
             aria-label="Close"
           >
-            <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
-            </svg>
+            <X size={16} />
           </button>
         </div>
         <div className="px-5 py-4">{children}</div>

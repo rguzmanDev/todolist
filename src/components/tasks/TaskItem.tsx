@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { Check, Edit, Trash2 } from 'lucide-react'
 import PriorityBadge from '@/components/ui/PriorityBadge'
 import TaskForm from '@/components/tasks/TaskForm'
 import { useAppStore } from '@/lib/store'
 import { formatDate, cn } from '@/lib/utils'
+import { THEME } from '@/lib/theme'
 import type { Task } from '@/lib/types'
 
 interface TaskItemProps {
@@ -40,7 +42,8 @@ export default function TaskItem({ task }: TaskItemProps) {
       <div
         className={cn(
           'group flex items-start gap-3 rounded-lg border border-transparent px-4 py-3',
-          'hover:border-gray-100 hover:bg-gray-50 transition-colors',
+          'transition-all duration-200',
+          'hover:border-violet-200 hover:bg-violet-50 hover:shadow-sm',
           isCompleted && 'opacity-60'
         )}
       >
@@ -50,16 +53,14 @@ export default function TaskItem({ task }: TaskItemProps) {
           aria-label={isCompleted ? 'Marcar como pendiente' : 'Marcar como completado'}
           className={cn(
             'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded',
-            'border-2 transition-colors',
+            'border-2 transition-all duration-200',
             isCompleted
-              ? 'border-indigo-500 bg-indigo-500 text-white'
-              : 'border-gray-300 hover:border-indigo-400'
+              ? 'border-violet-500 bg-violet-500 text-white'
+              : 'border-slate-300 hover:border-violet-400'
           )}
         >
           {isCompleted && (
-            <svg className="h-2.5 w-2.5" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1.5 5.5L4 8L8.5 2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <Check className="h-2.5 w-2.5" strokeWidth={3} />
           )}
         </button>
 
@@ -81,25 +82,23 @@ export default function TaskItem({ task }: TaskItemProps) {
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
           <button
             onClick={() => setShowEdit(true)}
             aria-label="Editar tarea"
-            className="rounded-md p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors"
+            className="rounded-md p-1.5 transition-all duration-200 hover:scale-110"
+            style={{ color: THEME.ui.text.secondary, backgroundColor: THEME.ui.state.hover }}
           >
-            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
-            </svg>
+            <Edit size={14} />
           </button>
           <button
             onClick={handleDelete}
             disabled={deleting}
             aria-label="Eliminar tarea"
-            className="rounded-md p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+            className="rounded-md p-1.5 transition-all duration-200 hover:scale-110"
+            style={{ color: THEME.ui.button.danger.text, backgroundColor: THEME.ui.button.danger.bg }}
           >
-            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.559a.75.75 0 1 0-1.492.149l.66 6.6A1.75 1.75 0 0 0 5.405 15h5.19a1.75 1.75 0 0 0 1.74-1.692l.661-6.6a.75.75 0 0 0-1.492-.149l-.66 6.6a.25.25 0 0 1-.249.241h-5.19a.25.25 0 0 1-.249-.241ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z" />
-            </svg>
+            <Trash2 size={14} />
           </button>
         </div>
       </div>

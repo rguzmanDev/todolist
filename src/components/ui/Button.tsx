@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { THEME } from '@/lib/theme'
 import type { ButtonHTMLAttributes } from 'react'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
@@ -13,13 +14,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    'bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-500',
+    'transition-all duration-200 hover:scale-105 active:scale-95',
   secondary:
-    'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus-visible:ring-gray-400',
+    'border transition-all duration-200 hover:scale-105 active:scale-95',
   ghost:
-    'text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-gray-400',
+    'transition-all duration-200 hover:scale-105 active:scale-95',
   danger:
-    'bg-red-50 text-red-600 hover:bg-red-100 focus-visible:ring-red-400',
+    'transition-all duration-200 hover:scale-105 active:scale-95',
 }
 
 const sizeClasses: Record<Size, string> = {
@@ -33,18 +34,54 @@ export default function Button({
   className,
   children,
   disabled,
+  style,
   ...props
 }: ButtonProps) {
+  const getButtonStyle = () => {
+    if (disabled) {
+      return {
+        backgroundColor: THEME.ui.state.disabled,
+        color: THEME.ui.text.secondary,
+        opacity: 0.5,
+      }
+    }
+
+    switch (variant) {
+      case 'primary':
+        return {
+          backgroundColor: THEME.ui.button.primary.bg,
+          color: THEME.ui.button.primary.text,
+        }
+      case 'secondary':
+        return {
+          backgroundColor: THEME.ui.button.secondary.bg,
+          color: THEME.ui.button.secondary.text,
+          borderColor: THEME.ui.button.secondary.border,
+          ...style,
+        }
+      case 'ghost':
+        return {
+          color: THEME.ui.button.ghost.text,
+        }
+      case 'danger':
+        return {
+          backgroundColor: THEME.ui.button.danger.bg,
+          color: THEME.ui.button.danger.text,
+        }
+    }
+  }
+
   return (
     <button
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-md font-medium transition-colors',
+        'inline-flex items-center gap-1.5 rounded-md font-medium',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
-        'disabled:pointer-events-none disabled:opacity-50',
+        'disabled:pointer-events-none',
         variantClasses[variant],
         sizeClasses[size],
         className
       )}
+      style={getButtonStyle()}
       disabled={disabled}
       {...props}
     >

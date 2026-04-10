@@ -1,31 +1,26 @@
 'use client'
 
 import { useState } from 'react'
+import { Plus, ChevronDown, BookOpen } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import BookForm from '@/components/books/BookForm'
 import SectionForm from '@/components/sections/SectionForm'
 import { cn, pluralize } from '@/lib/utils'
+import { THEME } from '@/lib/theme'
 import { APP_NAME, APP_DOMAIN } from '@/lib/constants'
 import type { Book, Section } from '@/lib/types'
 
 function ChevronIcon({ open }: { open: boolean }) {
   return (
-    <svg
-      className={cn('h-3.5 w-3.5 text-gray-400 transition-transform', open && 'rotate-90')}
-      viewBox="0 0 16 16"
-      fill="currentColor"
-    >
-      <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z" />
-    </svg>
+    <ChevronDown
+      size={14}
+      className={cn('text-gray-400 transition-transform', open && 'rotate-180')}
+    />
   )
 }
 
 function PlusIcon() {
-  return (
-    <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-      <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
-    </svg>
-  )
+  return <Plus size={16} />
 }
 
 interface SectionRowProps {
@@ -221,17 +216,15 @@ export default function Sidebar() {
   const totalPending = books.reduce((sum, b) => sum + b.pendingCount, 0)
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col bg-gray-900">
-      <div className="flex items-center gap-2.5 border-b border-gray-700/50 px-4 py-4">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600">
-          <svg className="h-4 w-4 text-white" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z" />
-          </svg>
+    <aside className="flex h-full w-60 shrink-0 flex-col" style={{ backgroundColor: THEME.ui.sidebar.background }}>
+      <div className="flex items-center gap-2.5 border-b px-4 py-4" style={{ borderColor: THEME.ui.sidebar.border, background: THEME.ui.gradients.header }}>
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: THEME.ui.sidebar.accent }}>
+          <BookOpen size={18} className="text-white" />
         </div>
         <div>
           <p className="text-sm font-semibold text-white">{APP_NAME}</p>
           {totalPending > 0 && (
-            <p className="text-xs text-gray-400">
+            <p style={{ color: THEME.ui.text.tertiary }}>
               {totalPending} {pluralize(totalPending, 'tarea', 'tareas')} pendiente
             </p>
           )}
@@ -240,7 +233,7 @@ export default function Sidebar() {
 
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2 pt-3">
         {books.length === 0 ? (
-          <p className="px-2 py-4 text-center text-xs text-gray-500">
+          <p style={{ color: THEME.ui.text.secondary }} className="px-2 py-4 text-center text-xs">
             Sin libros aún. Crea uno abajo.
           </p>
         ) : (
@@ -261,15 +254,16 @@ export default function Sidebar() {
         )}
       </nav>
 
-      <div className="border-t border-gray-700/50 p-3">
+      <div className="border-t p-3" style={{ borderColor: THEME.ui.sidebar.border }}>
         <button
           onClick={() => setShowNewBook(true)}
-          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium text-gray-400 hover:bg-gray-700 hover:text-gray-200 transition-colors"
+          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+          style={{ color: THEME.ui.text.tertiary, background: THEME.ui.sidebar.hover }}
         >
-          <PlusIcon />
+          <Plus size={16} />
           Nuevo libro
         </button>
-        <p className="mt-2 text-center text-xs text-gray-600">{APP_DOMAIN}</p>
+        <p className="mt-2 text-center text-xs" style={{ color: THEME.ui.text.secondary }}>{APP_DOMAIN}</p>
       </div>
 
       <BookForm open={showNewBook} onClose={() => setShowNewBook(false)} />

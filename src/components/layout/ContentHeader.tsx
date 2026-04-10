@@ -1,18 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { Plus, ChevronRight } from 'lucide-react'
 import TaskFilters from '@/components/tasks/TaskFilters'
 import TaskForm from '@/components/tasks/TaskForm'
 import Button from '@/components/ui/Button'
 import { useAppStore, selectSelectedBook, selectSelectedSection } from '@/lib/store'
-
-function PlusIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
-      <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
-    </svg>
-  )
-}
+import { THEME } from '@/lib/theme'
 
 export default function ContentHeader() {
   const [showNewTask, setShowNewTask] = useState(false)
@@ -27,15 +21,13 @@ export default function ContentHeader() {
 
   return (
     <>
-      <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+      <header className="flex items-center justify-between border-b px-6 py-4" style={{ borderColor: THEME.ui.border.light }}>
         <div>
           {selectedSection ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">{selectedBook?.name}</span>
-              <svg className="h-3.5 w-3.5 text-gray-300" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z" />
-              </svg>
-              <span className="text-sm font-semibold text-gray-900">{selectedSection.name}</span>
+              <span className="text-sm" style={{ color: THEME.ui.text.secondary }}>{selectedBook?.name}</span>
+              <ChevronRight size={14} style={{ color: THEME.ui.text.tertiary }} />
+              <span className="text-sm font-semibold" style={{ color: THEME.ui.text.primary }}>{selectedSection.name}</span>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -43,7 +35,7 @@ export default function ContentHeader() {
                 className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: selectedBook?.color }}
               />
-              <h1 className="text-sm font-semibold text-gray-900">{title}</h1>
+              <h1 className="text-sm font-semibold" style={{ color: THEME.ui.text.primary }}>{title}</h1>
             </div>
           )}
         </div>
@@ -51,7 +43,7 @@ export default function ContentHeader() {
         <div className="flex items-center gap-3">
           <TaskFilters />
           <Button size="sm" onClick={() => setShowNewTask(true)}>
-            <PlusIcon />
+            <Plus size={16} />
             Nueva tarea
           </Button>
         </div>

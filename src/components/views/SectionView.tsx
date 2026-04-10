@@ -26,7 +26,7 @@ export default function SectionView() {
   if (isLoadingTasks) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-gray-400">Loading tasks...</p>
+        <p className="text-sm text-gray-400">Cargando tareas...</p>
       </div>
     )
   }

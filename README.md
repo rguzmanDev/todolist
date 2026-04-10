@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Folio - Gestor de Tareas Jerárquico
 
-## Getting Started
+Aplicación web para gestionar tareas organizadas en libros y secciones. Diseñada para usar SQLite de forma local.
 
-First, run the development server:
+## Tecnologías
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend**: Next.js 16.2.3, React 19.2.4, TypeScript 5
+- **Estado**: Zustand 5.0.12
+- **Estilos**: Tailwind CSS 4
+- **Base de datos**: SQLite (better-sqlite3 12.8.0)
+- **Persistencia**: Archivo local `data/folio.db`
+
+## Estructura del Proyecto
+
+```
+src/
+├── app/                      # Next.js routes + API
+│   ├── api/books/           # CRUD books
+│   ├── api/tasks/           # CRUD tasks
+├── components/              # Componentes React
+│   ├── ui/                  # Primitivos (Button, Modal, Input, etc)
+│   ├── books/               # Formulario de libros
+│   ├── tasks/               # Formulario y lista de tareas
+│   ├── layout/              # Sidebar, Header
+│   └── views/               # BookView, SectionView
+├── lib/
+│   ├── db/                  # SQLite, migraciones, repositorios
+│   ├── api/                 # Cliente HTTP tipado
+│   ├── store/               # Zustand store
+│   ├── types.ts             # Interfaces TypeScript
+│   └── constants.ts         # Configuración (prioridades, colores)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Estructura de Datos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Tablas SQLite:**
+- `books` - Libros (colección raíz)
+- `sections` - Secciones dentro de libros
+- `tasks` - Tareas con prioridad (low/medium/high) y estado (pending/completed)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Todas las tablas tienen `created_at` y relaciones con cascading delete.
 
-## Learn More
+## Desarrollo Local
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install
+npm run dev  # http://localhost:3000
+npm run build
+npm start    # Producción
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Publicar en Servidor Casero
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Con Docker (Recomendado)
 
-## Deploy on Vercel
+1. **Crea `Dockerfile`:**
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Crea `docker-compose.yml`:**
+```yaml
+version: '3.8'
+services:
+  folio:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Deploy:**
+```bash
+docker-compose up -d
+```
+
+### Notas Importantes
+
+- **Base de datos**: El archivo `folio.db` se crea en `data/` automáticamente
+- **Volumen Docker**: Monta `./data:/app/data` para persistencia entre contenedores
+- **Puerto**: Por defecto usa `3000`, configurable en docker-compose.yml
+- **Node.js requerido**: better-sqlite3 necesita compilar natively (por eso Node.js en Dockerfile)
+- **Variable de entorno**: `NODE_ENV=production` para optimizar
+
+### Alternativa: Sin Docker
+
+```bash
+npm install
+npm run build
+NODE_ENV=production npm start
+```
+
+El archivo `data/folio.db` persistirá en el mismo directorio.
+
+## Interfaz de Usuario
+
+- Barra lateral oscura (#gray-900) con árbol de navegación
+- Jerarquía: Libros → Secciones → Tareas
+- Filtros: Todos / Pendiente / Completado
+- Modales para crear/editar
+- Responsive con Tailwind CSS
+
+---
+
+**Versión**: 1.0.0 | **Dominio**: rgcore.dev
