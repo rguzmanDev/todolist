@@ -41,7 +41,6 @@ yarn-error.log*
 
 next-env.d.ts
 
-# SQLite database files (local data, auto-generated)
-data/*.db
+# SQLite temporary files (auto-generated, local only)
 data/*.db-wal
 data/*.db-shm
