@@ -54,6 +54,7 @@ export default function NoteEditor({ note, bookId, sectionId, onClose }: NoteEdi
         toast.success('Nota guardada')
       } else {
         await createNote({ bookId, sectionId: sectionId ?? null, title: title.trim(), content })
+        toast.success('Nota creada')
       }
       onClose()
     } finally {

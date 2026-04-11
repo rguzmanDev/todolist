@@ -56,7 +56,7 @@ interface AppState {
   bulkDeleteTasks: (ids: string[]) => Promise<void>
 
   fetchNotes: (bookId: string, sectionId?: string | null) => Promise<void>
-  createNote: (payload: CreateNotePayload) => Promise<void>
+  createNote: (payload: CreateNotePayload) => Promise<Note>
   updateNote: (id: string, payload: UpdateNotePayload) => Promise<void>
   deleteNote: (id: string) => Promise<void>
 
@@ -114,7 +114,7 @@ export const useAppStore = create<AppState>()(
       },
 
       selectBook: async (id) => {
-        set({ selectedBookId: id, selectedSectionId: null, tasks: [], notes: [], sections: [], taskFilter: 'all' })
+        set({ selectedBookId: id, selectedSectionId: null, tasks: [], notes: [], sections: [], taskFilter: 'all', activeNote: null })
         if (!id) return
         await Promise.all([get().fetchSections(id), get().fetchTasks(id), get().fetchNotes(id)])
       },
@@ -151,7 +151,7 @@ export const useAppStore = create<AppState>()(
 
       selectSection: async (id) => {
         const { selectedBookId } = get()
-        set({ selectedSectionId: id, taskFilter: 'all' })
+        set({ selectedSectionId: id, taskFilter: 'all', activeNote: null })
         if (!selectedBookId) return
         if (id) {
           await Promise.all([get().fetchTasks(selectedBookId, id), get().fetchNotes(selectedBookId, id)])
@@ -239,7 +239,7 @@ export const useAppStore = create<AppState>()(
       createNote: async (payload) => {
         const note = await notesApi.create(payload)
         set((state) => ({ notes: [note, ...state.notes] }))
-        toast.success('Nota creada')
+        return note
       },
 
       updateNote: async (id, payload) => {
