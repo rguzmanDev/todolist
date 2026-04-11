@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Plus, ChevronDown } from 'lucide-react'
+import { Plus, ChevronDown, FileText } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import BookForm from '@/components/books/BookForm'
 import SectionForm from '@/components/sections/SectionForm'
@@ -10,6 +10,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { cn, pluralize } from '@/lib/utils'
 import { APP_NAME, APP_DOMAIN } from '@/lib/constants'
 import { useTheme } from '@/lib/hooks/useTheme'
+import { toast } from '@/lib/toast'
 import type { Book, Section } from '@/lib/types'
 
 function ChevronIcon({ open }: { open: boolean }) {
@@ -35,6 +36,15 @@ interface SectionRowProps {
 
 function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) {
   const [showEdit, setShowEdit] = useState(false)
+  const deleteSection = useAppStore((s) => s.deleteSection)
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    toast.confirm(
+      `¿Eliminar "${section.name}" y todas sus tareas?`,
+      () => deleteSection(bookId, section.id),
+    )
+  }
 
   return (
     <>
@@ -51,7 +61,7 @@ function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) 
         >
           {section.name}
         </button>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           {section.pendingCount > 0 && (
             <span
               className="rounded-full px-1.5 py-0.5 text-xs font-medium"
@@ -63,19 +73,28 @@ function SectionRow({ section, bookId, isSelected, onSelect }: SectionRowProps) 
               {section.pendingCount}
             </span>
           )}
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowEdit(true) }}
-            className="invisible rounded p-0.5 transition-colors group-hover:visible"
-            style={{
-              backgroundColor: 'var(--color-sidebar-hover)',
-              color: 'var(--color-sidebar-text)',
-            }}
-            aria-label="Edit section"
-          >
-            <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
-            </svg>
-          </button>
+          <div className="invisible flex items-center gap-0.5 group-hover:visible">
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowEdit(true) }}
+              className="rounded p-0.5 transition-colors"
+              style={{ backgroundColor: 'var(--color-sidebar-hover)', color: 'var(--color-sidebar-text)' }}
+              aria-label="Editar sección"
+            >
+              <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
+              </svg>
+            </button>
+            <button
+              onClick={handleDelete}
+              className="rounded p-0.5 transition-colors"
+              style={{ color: '#ef4444', backgroundColor: 'var(--color-sidebar-hover)' }}
+              aria-label="Eliminar sección"
+            >
+              <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.559a.75.75 0 1 0-1.492.149l.66 6.6A1.75 1.75 0 0 0 5.405 15h5.19a1.75 1.75 0 0 0 1.74-1.692l.661-6.6a.75.75 0 0 0-1.492-.149l-.66 6.6a.25.25 0 0 1-.249.241h-5.19a.25.25 0 0 1-.249-.241ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       {showEdit && (
@@ -143,12 +162,23 @@ function BookRow({
               style={{ backgroundColor: book.color }}
             />
             <span className="truncate">{book.name}</span>
+            {book.type === 'notes' && (
+              <FileText size={11} className="shrink-0 opacity-60" />
+            )}
           </button>
 
-          {book.pendingCount > 0 && (
-            <span className="shrink-0 rounded-full px-1.5 py-0.5 text-xs" style={{ backgroundColor: 'var(--color-sidebar-hover)', color: 'var(--color-sidebar-text)' }}>
-              {book.pendingCount}
-            </span>
+          {book.type === 'notes' ? (
+            book.noteCount > 0 && (
+              <span className="shrink-0 rounded-full px-1.5 py-0.5 text-xs" style={{ backgroundColor: 'var(--color-sidebar-hover)', color: 'var(--color-sidebar-text)' }}>
+                {book.noteCount}
+              </span>
+            )
+          ) : (
+            book.pendingCount > 0 && (
+              <span className="shrink-0 rounded-full px-1.5 py-0.5 text-xs" style={{ backgroundColor: 'var(--color-sidebar-hover)', color: 'var(--color-sidebar-text)' }}>
+                {book.pendingCount}
+              </span>
+            )
           )}
 
           <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
@@ -173,7 +203,10 @@ function BookRow({
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                if (confirm(`Delete \"${book.name}\" and all its tasks?`)) deleteBook(book.id)
+                toast.confirm(
+                  `¿Eliminar "${book.name}" y todas sus tareas?`,
+                  () => deleteBook(book.id),
+                )
               }}
               className="rounded p-1 transition-colors"
               style={{

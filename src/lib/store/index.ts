@@ -2,11 +2,14 @@
 
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { booksApi, sectionsApi, tasksApi } from '@/lib/api/client'
+import { booksApi, sectionsApi, tasksApi, notesApi } from '@/lib/api/client'
+import { toast } from '@/lib/toast'
 import type {
   Book,
   Section,
   Task,
+  Note,
+  ActiveNote,
   TaskFilter,
   CreateBookPayload,
   UpdateBookPayload,
@@ -14,6 +17,8 @@ import type {
   UpdateSectionPayload,
   CreateTaskPayload,
   UpdateTaskPayload,
+  CreateNotePayload,
+  UpdateNotePayload,
 } from '@/lib/types'
 import type { ThemeMode } from '@/lib/theme'
 
@@ -21,6 +26,8 @@ interface AppState {
   books: Book[]
   sections: Section[]
   tasks: Task[]
+  notes: Note[]
+  activeNote: ActiveNote
   selectedBookId: string | null
   selectedSectionId: string | null
   taskFilter: TaskFilter
@@ -44,7 +51,16 @@ interface AppState {
   createTask: (payload: CreateTaskPayload) => Promise<void>
   updateTask: (id: string, payload: UpdateTaskPayload) => Promise<void>
   deleteTask: (id: string) => Promise<void>
+  reorderTasks: (ids: string[]) => Promise<void>
+  bulkUpdateTasks: (ids: string[], payload: UpdateTaskPayload) => Promise<void>
+  bulkDeleteTasks: (ids: string[]) => Promise<void>
 
+  fetchNotes: (bookId: string, sectionId?: string | null) => Promise<void>
+  createNote: (payload: CreateNotePayload) => Promise<void>
+  updateNote: (id: string, payload: UpdateNotePayload) => Promise<void>
+  deleteNote: (id: string) => Promise<void>
+
+  setActiveNote: (note: ActiveNote) => void
   setTaskFilter: (filter: TaskFilter) => void
   toggleTheme: () => void
   setTheme: (theme: ThemeMode) => void
@@ -56,6 +72,8 @@ export const useAppStore = create<AppState>()(
       books: [],
       sections: [],
       tasks: [],
+      notes: [],
+      activeNote: null,
       selectedBookId: null,
       selectedSectionId: null,
       taskFilter: 'all',
@@ -96,9 +114,9 @@ export const useAppStore = create<AppState>()(
       },
 
       selectBook: async (id) => {
-        set({ selectedBookId: id, selectedSectionId: null, tasks: [], sections: [], taskFilter: 'all' })
+        set({ selectedBookId: id, selectedSectionId: null, tasks: [], notes: [], sections: [], taskFilter: 'all' })
         if (!id) return
-        await Promise.all([get().fetchSections(id), get().fetchTasks(id)])
+        await Promise.all([get().fetchSections(id), get().fetchTasks(id), get().fetchNotes(id)])
       },
 
       fetchSections: async (bookId) => {
@@ -128,6 +146,7 @@ export const useAppStore = create<AppState>()(
             state.selectedSectionId === sectionId ? null : state.selectedSectionId,
         }))
         await get().fetchBooks()
+        toast.info('Sección eliminada')
       },
 
       selectSection: async (id) => {
@@ -135,9 +154,9 @@ export const useAppStore = create<AppState>()(
         set({ selectedSectionId: id, taskFilter: 'all' })
         if (!selectedBookId) return
         if (id) {
-          await get().fetchTasks(selectedBookId, id)
+          await Promise.all([get().fetchTasks(selectedBookId, id), get().fetchNotes(selectedBookId, id)])
         } else {
-          await get().fetchTasks(selectedBookId)
+          await Promise.all([get().fetchTasks(selectedBookId), get().fetchNotes(selectedBookId)])
         }
       },
 
@@ -156,6 +175,7 @@ export const useAppStore = create<AppState>()(
         await get().fetchBooks()
         const { selectedBookId } = get()
         if (selectedBookId) await get().fetchSections(selectedBookId)
+        toast.success('Tarea creada')
       },
 
       updateTask: async (id, payload) => {
@@ -166,6 +186,11 @@ export const useAppStore = create<AppState>()(
         await get().fetchBooks()
         const { selectedBookId } = get()
         if (selectedBookId) await get().fetchSections(selectedBookId)
+        if (payload.status) {
+          toast.success(payload.status === 'completed' ? 'Tarea completada ✓' : 'Tarea pendiente')
+        } else {
+          toast.success('Tarea actualizada')
+        }
       },
 
       deleteTask: async (id) => {
@@ -174,7 +199,61 @@ export const useAppStore = create<AppState>()(
         await get().fetchBooks()
         const { selectedBookId } = get()
         if (selectedBookId) await get().fetchSections(selectedBookId)
+        toast.info('Tarea eliminada')
       },
+
+      reorderTasks: async (ids) => {
+        // optimistic: order is already set in TaskGroup state
+        await tasksApi.reorder(ids)
+      },
+
+      bulkUpdateTasks: async (ids, payload) => {
+        await Promise.all(ids.map((id) => tasksApi.update(id, payload)))
+        await get().fetchBooks()
+        const { selectedBookId, selectedSectionId } = get()
+        if (selectedBookId) {
+          await get().fetchTasks(selectedBookId, selectedSectionId)
+          await get().fetchSections(selectedBookId)
+        }
+        const label = payload.status === 'completed' ? 'completadas' : payload.status === 'in_progress' ? 'en proceso' : 'pendientes'
+        toast.success(`${ids.length} ${ids.length === 1 ? 'tarea' : 'tareas'} marcadas como ${label}`)
+      },
+
+      bulkDeleteTasks: async (ids) => {
+        await Promise.all(ids.map((id) => tasksApi.delete(id)))
+        set((state) => ({ tasks: state.tasks.filter((t) => !ids.includes(t.id)) }))
+        await get().fetchBooks()
+        const { selectedBookId } = get()
+        if (selectedBookId) await get().fetchSections(selectedBookId)
+        toast.info(`${ids.length} ${ids.length === 1 ? 'tarea eliminada' : 'tareas eliminadas'}`)
+      },
+
+      fetchNotes: async (bookId, sectionId) => {
+        const notes =
+          sectionId !== undefined && sectionId !== null
+            ? await notesApi.listBySection(bookId, sectionId)
+            : await notesApi.listByBook(bookId)
+        set({ notes })
+      },
+
+      createNote: async (payload) => {
+        const note = await notesApi.create(payload)
+        set((state) => ({ notes: [note, ...state.notes] }))
+        toast.success('Nota creada')
+      },
+
+      updateNote: async (id, payload) => {
+        const updated = await notesApi.update(id, payload)
+        set((state) => ({ notes: state.notes.map((n) => (n.id === id ? updated : n)) }))
+      },
+
+      deleteNote: async (id) => {
+        await notesApi.delete(id)
+        set((state) => ({ notes: state.notes.filter((n) => n.id !== id) }))
+        toast.info('Nota eliminada')
+      },
+
+      setActiveNote: (note) => set({ activeNote: note }),
 
       setTaskFilter: (filter) => set({ taskFilter: filter }),
 

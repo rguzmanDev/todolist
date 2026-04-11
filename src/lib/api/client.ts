@@ -2,12 +2,15 @@ import type {
   Book,
   Section,
   Task,
+  Note,
   CreateBookPayload,
   UpdateBookPayload,
   CreateSectionPayload,
   UpdateSectionPayload,
   CreateTaskPayload,
   UpdateTaskPayload,
+  CreateNotePayload,
+  UpdateNotePayload,
   ApiSuccessResponse,
 } from '@/lib/types'
 
@@ -58,4 +61,14 @@ export const tasksApi = {
   create: (payload: CreateTaskPayload) => post<Task>('/api/tasks', payload),
   update: (id: string, payload: UpdateTaskPayload) => patch<Task>(`/api/tasks/${id}`, payload),
   delete: (id: string) => del(`/api/tasks/${id}`),
+  reorder: (ids: string[]) => post<null>('/api/tasks/reorder', { ids }),
+}
+
+export const notesApi = {
+  listByBook: (bookId: string) => get<Note[]>(`/api/notes?bookId=${bookId}`),
+  listBySection: (bookId: string, sectionId: string) =>
+    get<Note[]>(`/api/notes?bookId=${bookId}&sectionId=${sectionId}`),
+  create: (payload: CreateNotePayload) => post<Note>('/api/notes', payload),
+  update: (id: string, payload: UpdateNotePayload) => patch<Note>(`/api/notes/${id}`, payload),
+  delete: (id: string) => del(`/api/notes/${id}`),
 }

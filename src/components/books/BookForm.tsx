@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Modal from '@/components/ui/Modal'
@@ -8,7 +8,7 @@ import ColorPicker from '@/components/ui/ColorPicker'
 import { useAppStore } from '@/lib/store'
 import { DEFAULT_BOOK_COLOR } from '@/lib/constants'
 import type { BookColor } from '@/lib/constants'
-import type { Book } from '@/lib/types'
+import type { Book, BookType } from '@/lib/types'
 
 interface BookFormProps {
   open: boolean
@@ -19,6 +19,7 @@ interface BookFormProps {
 export default function BookForm({ open, onClose, book }: BookFormProps) {
   const [name, setName] = useState(book?.name ?? '')
   const [color, setColor] = useState<string>(book?.color ?? DEFAULT_BOOK_COLOR)
+  const [type, setType] = useState<BookType>(book?.type ?? 'tasks')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -30,6 +31,7 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
   const handleClose = () => {
     setName(book?.name ?? '')
     setColor(book?.color ?? DEFAULT_BOOK_COLOR)
+    setType(book?.type ?? 'tasks')
     setError('')
     onClose()
   }
@@ -40,9 +42,9 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
     setLoading(true)
     try {
       if (isEditing && book) {
-        await updateBook(book.id, { name: name.trim(), color })
+        await updateBook(book.id, { name: name.trim(), color, type })
       } else {
-        await createBook({ name: name.trim(), color })
+        await createBook({ name: name.trim(), color, type })
       }
       handleClose()
     } finally {
@@ -63,13 +65,34 @@ export default function BookForm({ open, onClose, book }: BookFormProps) {
           autoFocus
         />
         <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium" style={{ color: 'var(--color-text-primary)' }}>Tipo de libro</span>
+          <div
+            className="flex overflow-hidden rounded-lg border"
+            style={{ borderColor: 'var(--color-border-medium)' }}
+          >
+            {(['tasks', 'notes'] as BookType[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setType(t)}
+                className="flex-1 px-3 py-2 text-sm font-medium transition-colors"
+                style={
+                  type === t
+                    ? { backgroundColor: 'var(--color-sidebar-accent)', color: '#fff' }
+                    : { backgroundColor: 'var(--color-bg)', color: 'var(--color-text-secondary)' }
+                }
+              >
+                {t === 'tasks' ? 'Tareas' : 'Notas'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-1.5">
           <span className="text-xs font-medium" style={{ color: 'var(--color-text-primary)' }}>Color</span>
           <ColorPicker value={color} onChange={(c: BookColor) => setColor(c)} />
         </div>
         <div className="flex justify-end gap-2 pt-1">
-          <Button type="button" variant="secondary" onClick={handleClose}>
-            Cancelar
-          </Button>
+          <Button type="button" variant="secondary" onClick={handleClose}>Cancelar</Button>
           <Button type="submit" disabled={loading}>
             {loading ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear libro'}
           </Button>

@@ -22,6 +22,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     const book = bookRepository.update(bookId, {
       name: body.name?.trim(),
       color: body.color,
+      type: body.type,
     })
     if (!book) return apiError('Book not found', 404)
     return apiSuccess(book)

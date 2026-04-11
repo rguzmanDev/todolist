@@ -1,16 +1,20 @@
 export type TaskPriority = 'low' | 'medium' | 'high'
 
-export type TaskStatus = 'pending' | 'completed'
+export type TaskStatus = 'pending' | 'in_progress' | 'completed'
 
 export type TaskFilter = TaskStatus | 'all'
+
+export type BookType = 'tasks' | 'notes'
 
 export interface Book {
   id: string
   name: string
   color: string
+  type: BookType
   createdAt: string
   taskCount: number
   pendingCount: number
+  noteCount: number
 }
 
 export interface Section {
@@ -37,11 +41,13 @@ export interface Task {
 export interface CreateBookPayload {
   name: string
   color: string
+  type?: BookType
 }
 
 export interface UpdateBookPayload {
   name?: string
   color?: string
+  type?: BookType
 }
 
 export interface CreateSectionPayload {
@@ -66,6 +72,30 @@ export interface UpdateTaskPayload {
   priority?: TaskPriority
   status?: TaskStatus
   completedAt?: string | null
+}
+
+export interface Note {
+  id: string
+  bookId: string
+  sectionId: string | null
+  title: string
+  content: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type ActiveNote = Note | 'new' | null
+
+export interface CreateNotePayload {
+  bookId: string
+  sectionId?: string | null
+  title: string
+  content?: string
+}
+
+export interface UpdateNotePayload {
+  title?: string
+  content?: string
 }
 
 export interface ApiSuccessResponse<T> {

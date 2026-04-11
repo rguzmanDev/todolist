@@ -2,11 +2,14 @@
 
 import { ReactNode } from 'react'
 import { useTheme } from '@/lib/hooks/useTheme'
+import Toaster from '@/components/ui/Toaster'
 
-/**
- * Componente que inicializa y maneja el tema de la aplicación
- */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   useTheme()
-  return children
+  return (
+    <>
+      {children}
+      <Toaster />
+    </>
+  )
 }

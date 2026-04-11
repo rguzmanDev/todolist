@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, ChevronRight } from 'lucide-react'
+import { Plus, FileText, ChevronRight } from 'lucide-react'
 import TaskFilters from '@/components/tasks/TaskFilters'
 import TaskForm from '@/components/tasks/TaskForm'
 import Button from '@/components/ui/Button'
@@ -14,6 +14,7 @@ export default function ContentHeader({ onMenuOpen }: { onMenuOpen?: () => void 
   const selectedBookId = useAppStore((s) => s.selectedBookId)
   const selectedBook = useAppStore(selectSelectedBook)
   const selectedSection = useAppStore(selectSelectedSection)
+  const setActiveNote = useAppStore((s) => s.setActiveNote)
 
   const title = selectedSection?.name ?? selectedBook?.name ?? null
 
@@ -47,12 +48,19 @@ export default function ContentHeader({ onMenuOpen }: { onMenuOpen?: () => void 
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <TaskFilters />
-          <Button size="sm" onClick={() => setShowNewTask(true)} title="Nueva tarea">
-            <Plus size={16} />
-            <span className="hidden sm:inline">Nueva tarea</span>
-          </Button>
+        <div className="flex items-center gap-2">
+          {selectedBook?.type !== 'notes' && <TaskFilters />}
+          {selectedBook?.type === 'notes' ? (
+            <Button size="sm" onClick={() => setActiveNote('new')} title="Nueva nota">
+              <FileText size={15} />
+              <span className="hidden sm:inline">Nueva nota</span>
+            </Button>
+          ) : (
+            <Button size="sm" onClick={() => setShowNewTask(true)} title="Nueva tarea">
+              <Plus size={16} />
+              <span className="hidden sm:inline">Nueva tarea</span>
+            </Button>
+          )}
         </div>
       </header>
 

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as Partial<CreateBookPayload>
     if (!body.name?.trim()) return apiError('Name is required', 400)
     if (!body.color?.trim()) return apiError('Color is required', 400)
-    const book = bookRepository.create({ name: body.name.trim(), color: body.color })
+    const book = bookRepository.create({ name: body.name.trim(), color: body.color, type: body.type })
     return apiSuccess(book, 201)
   })
 }

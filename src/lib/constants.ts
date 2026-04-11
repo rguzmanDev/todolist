@@ -28,7 +28,8 @@ export const PRIORITY_CONFIG = {
 } as const
 
 export const TASK_FILTER_CONFIG = {
-  all: { label: 'Todos', shortLabel: 'Todo' },
-  pending: { label: 'Pendiente', shortLabel: 'Pend.' },
-  completed: { label: 'Completado', shortLabel: 'Hecho' },
+  all:         { label: 'Todos',      shortLabel: 'Todo' },
+  pending:     { label: 'Pendiente',  shortLabel: 'Pend.' },
+  in_progress: { label: 'En proceso', shortLabel: 'En pr.' },
+  completed:   { label: 'Completado', shortLabel: 'Hecho' },
 } as const
